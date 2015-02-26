@@ -8,7 +8,7 @@ __email__ = "ag@easywhere.ru"
 import logging
 import ConfigParser
 
-from rssgen import RSSGen
+from RSSGen import RSSGen
 
 links = [
     'http://auto.vesti.ru/export/auto.vesti.rss',
@@ -21,7 +21,7 @@ links = [
 config = ConfigParser.ConfigParser()
 config.read('config.ini')
 
-logging.basicConfig(level=config.getString("LogLevel", "Level"))
+logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
