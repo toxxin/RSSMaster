@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 
 __author__ = 'Anton Glukhov'
 __version__ = "0.1.1"
@@ -8,13 +9,16 @@ __email__ = "ag@easywhere.ru"
 import logging
 import ConfigParser
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
 from RSSGen import RSSGen
+from model import RSSFeed, DeclarativeBase
 
 links = [
     'http://auto.vesti.ru/export/auto.vesti.rss',
     'http://www.topgearrussia.ru/10148/rss/d870a12e.xml',
     'http://motor.ru/export/atom/',
-    'http://old.avtomir.com/rss/rss.xml',
     'http://carsguru.net/rss/news/'
 ]
 
@@ -25,10 +29,17 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
+engine = create_engine('mysql://' + config.get('Database', 'DBUSER') + ':' + config.get('Database', 'DBPASS') + '@' + config.get('Database', 'DBHOST') + ':3306/' + config.get('Database', 'DBNAME') + '?charset=utf8', echo=True, encoding='utf8')
+metadata = DeclarativeBase.metadata
+metadata.bind = engine
+
+# metadata.create_all(engine)
+
 if __name__ == '__main__':
 
     for url in links:
         log.debug("URL in processing: %s", url)
+        session = Session()
         gen = RSSGen(url)
         try:
             ret = gen.generate()
@@ -38,6 +49,15 @@ if __name__ == '__main__':
                 log.debug("title: %s", r['title'])
                 log.debug("desc: %s", r['desc'])
                 log.debug("published: %s", r['published'])
-                # log.debug("pic: %s", r['pic'])
+                log.debug("pic: %s", r['pic'])
+
+                f = RSSFeed(guid=r['guid'], link=r['link'], title=r['title'], desc=r['desc'],
+                            published=datetime.datetime.fromtimestamp(r['published']), pic=r['pic'])
+                session.add(f)
+
+            session.commit()
         except:
+            session.rollback()
             log.debug("Cannot generate data.")
+        finally:
+            session.close()
