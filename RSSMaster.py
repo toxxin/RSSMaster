@@ -33,13 +33,16 @@ engine = create_engine('mysql://' + config.get('Database', 'DBUSER') + ':' + con
 metadata = DeclarativeBase.metadata
 metadata.bind = engine
 
-# metadata.create_all(engine)
+metadata.create_all(engine)
 
 if __name__ == '__main__':
 
     for url in links:
         log.debug("URL in processing: %s", url)
         session = Session()
+        ts = session.query(RSSFeed.guid).filter(RSSFeed.url == url).all()
+        gs = [t[0] for t in ts]
+
         gen = RSSGen(url)
         try:
             ret = gen.generate()
@@ -51,9 +54,10 @@ if __name__ == '__main__':
                 log.debug("published: %s", r['published'])
                 log.debug("pic: %s", r['pic'])
 
-                f = RSSFeed(guid=r['guid'], link=r['link'], title=r['title'], desc=r['desc'],
-                            published=datetime.datetime.fromtimestamp(r['published']), pic=r['pic'])
-                session.add(f)
+                if r['guid'] not in gs:
+                    f = RSSFeed(url=url, guid=r['guid'], link=r['link'], title=r['title'], desc=r['desc'],
+                                published=datetime.datetime.fromtimestamp(r['published']), pic=r['pic'])
+                    session.add(f)
 
             session.commit()
         except:

@@ -17,6 +17,7 @@ class RSSFeed(DeclarativeBase):
 
     #colomn definition
     id = Column(u'id', Integer, primary_key=True)
+    url = Column(u'url', String(255), nullable=False)
     guid = Column(u'guid', String(255), nullable=False)
     link = Column(u'link', String(255), nullable=False)
     title = Column(u'title', UnicodeText, nullable=False)
@@ -25,7 +26,8 @@ class RSSFeed(DeclarativeBase):
     published = Column(u'published', TIMESTAMP(), nullable=False)
     pic = Column(u'pic', String(255), nullable=True)
 
-    def __init__(self, guid, link, title, desc, published, pic=None):
+    def __init__(self, url, guid, link, title, desc, published, pic=None):
+        self.url = url
         self.guid = guid
         self.link = link
         self.title = title
