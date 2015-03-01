@@ -23,7 +23,6 @@ class RSSGen(object):
     }
 
     def __init__(self, url):
-        # log.debug("Init new gen object. URL - %s", url)
         self._url = url
 
     def _html_escape(self, text):

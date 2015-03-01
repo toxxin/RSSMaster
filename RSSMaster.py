@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-import datetime
 
 __author__ = 'Anton Glukhov'
 __version__ = "0.1.1"
 __copyright__ = "Copyright 2015, Easywhere"
 __email__ = "ag@easywhere.ru"
 
+import datetime
 import logging
 import ConfigParser
 
@@ -33,7 +33,6 @@ engine = create_engine('mysql://' + config.get('Database', 'DBUSER') + ':' + con
 metadata = DeclarativeBase.metadata
 metadata.bind = engine
 
-metadata.create_all(engine)
 
 if __name__ == '__main__':
 
