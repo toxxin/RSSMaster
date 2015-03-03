@@ -7,6 +7,7 @@ __email__ = "ag@easywhere.ru"
 
 import datetime
 import logging
+import logging.config
 import ConfigParser
 
 from sqlalchemy import create_engine
@@ -25,8 +26,8 @@ links = [
 config = ConfigParser.ConfigParser()
 config.read('config.ini')
 
-logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
+logging.config.fileConfig('logging.ini')
 
 
 engine = create_engine('mysql://' + config.get('Database', 'DBUSER') + ':' + config.get('Database', 'DBPASS') + '@' + config.get('Database', 'DBHOST') + ':3306/' + config.get('Database', 'DBNAME') + '?charset=utf8', echo=True, encoding='utf8')
