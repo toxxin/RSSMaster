@@ -53,7 +53,7 @@ class RSSGen(object):
             "guid": entry['id'],
             "link": entry['link'],
             "title": entry['title'],
-            "desc": entry['summary'],
+            "desc": entry['summary'] if entry['summary'] else None,
             "published": self._make_date(entry),
             "pic": self._get_link(entry['links'])
         }

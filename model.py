@@ -21,7 +21,7 @@ class RSSFeed(DeclarativeBase):
     guid = Column(u'guid', String(255), nullable=False)
     link = Column(u'link', String(255), nullable=False)
     title = Column(u'title', UnicodeText, nullable=False)
-    desc = Column(u'desc', UnicodeText, nullable=False)
+    desc = Column(u'desc', UnicodeText, nullable=True)
     creation_date = Column(u'creation_date', TIMESTAMP(), nullable=False, default=func.now())
     published = Column(u'published', TIMESTAMP(), nullable=False)
     pic = Column(u'pic', String(255), nullable=True)
