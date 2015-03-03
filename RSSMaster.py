@@ -6,6 +6,7 @@ __copyright__ = "Copyright 2015, Easywhere"
 __email__ = "ag@easywhere.ru"
 
 import datetime
+import ast
 import logging
 import logging.config
 import ConfigParser
@@ -16,19 +17,12 @@ from sqlalchemy.orm import Session
 from RSSGen import RSSGen
 from model import RSSFeed, DeclarativeBase
 
-links = [
-    'http://auto.vesti.ru/export/auto.vesti.rss',
-    'http://www.topgearrussia.ru/10148/rss/d870a12e.xml',
-    'http://motor.ru/export/atom/',
-    'http://carsguru.net/rss/news/'
-]
 
 config = ConfigParser.ConfigParser()
 config.read('config.ini')
 
 log = logging.getLogger(__name__)
 logging.config.fileConfig('logging.ini')
-
 
 engine = create_engine('mysql://' + config.get('Database', 'DBUSER') + ':' + config.get('Database', 'DBPASS') + '@' + config.get('Database', 'DBHOST') + ':3306/' + config.get('Database', 'DBNAME') + '?charset=utf8', echo=True, encoding='utf8')
 metadata = DeclarativeBase.metadata
@@ -37,6 +31,7 @@ metadata.bind = engine
 
 if __name__ == '__main__':
 
+    links = ast.literal_eval(config.get("Links", "URLS"))
     for url in links:
         log.debug("URL in processing: %s", url)
         session = Session()
